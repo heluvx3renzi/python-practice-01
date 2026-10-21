@@ -1,39 +1,56 @@
+CONVERTERS = {
+    1: ("Цельсий -> Фаренгейт",   lambda v: v * 9 / 5 + 32, "°F"),
+    2: ("Километры -> Мили",       lambda v: v * 0.621371, "миль"),
+    3: ("Килограммы -> Фунты",     lambda v: v * 2.20462, "фунтов"),
+    4: ("Метры -> Футы",           lambda v: v * 3.28084, "футов"),
+    5: ("Литры -> Галлоны",        lambda v: v * 0.264172, "галлонов"),
+    6: ("Мегабайты -> Гигабайты",  lambda v: v / 1024, "ГБ"),
+}
+
+
+def get_choice():
+    while True:
+        try:
+            choice = int(input("Ваш выбор: "))
+            if choice in CONVERTERS:
+                return choice
+            print("Ошибка: выберите пункт из списка.")
+        except ValueError:
+            print("Ошибка: введите число.")
+
+
+def get_value():
+    while True:
+        try:
+            return float(input("Введите значение: "))
+        except ValueError:
+            print("Ошибка: введите корректное число.")
+
+
+def ask_continue():
+    while True:
+        answer = input("Выполнить ещё одно преобразование? (да/нет): ").strip().lower()
+        if answer in ("да", "нет"):
+            return answer == "да"
+        print("Ошибка: введите 'да' или 'нет'.")
+
 
 def main():
-    print("Выберите конвертер:")
-    print("1. Градусы Цельсия -> Фаренгейты")
-    print("2. Километры -> Мили")
-    print("3. Килограммы -> Фунты")
-    print("4. Метры -> Футы")
+    while True:
+        print("Выберите конвертер:")
+        for num, (name, _, _) in CONVERTERS.items():
+            print(f"{num}. {name}")
 
-    choice = input("Ваш выбор: ")
+        choice = get_choice()
+        value = get_value()
+        _, func, unit = CONVERTERS[choice]
+        result = func(value)
+        print(f"{value} -> {result:.2f} {unit}")
 
-    if choice not in ("1", "2", "3", "4"):
-        print("Ошибка: неизвестный номер преобразования.")
-        main()
-        
-    try:
-        value = float(input("Введите исходное значение: "))
+        if not ask_continue():
+            print("Работа программы завершена.")
+            break
 
-        if choice == "1":
-            result = value * 9 / 5 + 32
-            print(f"{value:g} C = {result:.1f} F")
-
-        elif choice == "2":
-            result = value * 0.621371
-            print(f"{value:g} км = {result:.2f} миль")
-
-        elif choice == "3":
-            result = value * 2.20462
-            print(f"{value:g} кг = {result:.2f} фунтов")
-
-        elif choice == "4":
-            result = value * 3.28084
-            print(f"{value:g} м = {result:.2f} футов")
-
-    except ValueError:
-        print("Ошибка: необходимо ввести число.")
-        main()
 
 if __name__ == "__main__":
     main()

@@ -1,58 +1,50 @@
-def main():
-    print("=== КАЛЬКУЛЯТОР ПОКУПОК ===")
-
-    cart = []
-    total = 0
-
+def get_name():
     while True:
-        name = input("\nНазвание товара: ").strip()
+        name = input("Введите название товара: ").strip()
+        if name:
+            return name
+        print("Ошибка: название не должно быть пустым.")
 
-        if not name:
-            print("Название не может быть пустым!")
-            continue
 
+def get_positive(prompt):
+    while True:
         try:
-            price = float(input("Цена товара: "))
-            quantity = int(input("Количество: "))
+            value = float(input(prompt))
+            if value > 0:
+                return value
+            print("Ошибка: значение должно быть положительным.")
         except ValueError:
-            print("Ошибка ввода!")
-            continue
+            print("Ошибка: введите число.")
 
-        if price <= 0 or quantity <= 0:
-            print("Цена и количество должны быть больше нуля!")
-            continue
+
+def ask_continue():
+    while True:
+        answer = input("Добавить ещё один товар? (да/нет): ").strip().lower()
+        if answer in ("да", "нет"):
+            return answer == "да"
+        print("Ошибка: введите 'да' или 'нет'.")
+
+
+def main():
+    total = 0.0
+    while True:
+        name = get_name()
+        price = get_positive("Введите цену: ")
+        quantity = get_positive("Введите количество: ")
 
         cost = price * quantity
-        cart.append((name, price, quantity, cost))
         total += cost
+        print(f"Товар: {name}, стоимость: {cost:.2f}")
 
-        print(f"Стоимость: {cost:.2f} руб.")
-
-        if input("Добавить еще товар? (да/нет): ").lower() != "да":
+        if not ask_continue():
             break
 
-    if total < 5000:
-        percent = 0
-    elif total < 10000:
-        percent = 5
-    elif total < 15000:
-        percent = 10
-    else:
-        percent = 15
+    discount = total * 0.05 if total > 5000 else 0
+    final = total - discount
 
-    discount = total * percent / 100
-
-    print("\n========== ЧЕК ==========")
-
-    for name, price, quantity, cost in cart:
-        print(f"{name}: {price:.2f} x {quantity} = {cost:.2f} руб.")
-
-    print("-------------------------")
-    print(f"Сумма: {total:.2f} руб.")
-    print(f"Скидка: {percent}%")
-    print(f"Экономия: {discount:.2f} руб.")
-    print(f"К оплате: {total - discount:.2f} руб.")
-    print("=========================")
+    print(f"Общая стоимость: {total:.2f}")
+    print(f"Скидка: {discount:.2f}")
+    print(f"Итого к оплате: {final:.2f}")
 
 
 if __name__ == "__main__":
